@@ -1,7 +1,7 @@
 {
   "name": "zero-decimal-currencies",
-  "version": "0.0.0",
-  "description": "Zero-decimal currencies parse, useful for Stripe ",
+  "version": "1.0.0",
+  "description": "Get the smallest currency unit event to a Zero Decimal Currency",
   "main": "lib/index.js",
   "files": [
     "lib/"
@@ -21,7 +21,6 @@
     "url": "https://github.com/KelvinCampelo/zero-decimal-currencies"
   },
   "scripts": {
-    "audit": "nsp check package",
     "build": "babel -d ./ ./src",
     "check": "npm run audit && npm outdated --depth 0",
     "coverage": "nyc --reporter=lcov --reporter=text --reporter=html npm test",
