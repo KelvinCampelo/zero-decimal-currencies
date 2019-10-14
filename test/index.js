@@ -31,6 +31,27 @@ test('Test with zero decimal currency and display option', t => {
   t.pass();
 });
 
+test('Test with zero decimal currency and no rounding up', t => {
+  var zeroDecimal = zeroDecimalCurrencies(100.5100000052, 'JPY', false, true);
+
+  t.is(zeroDecimal, '100');
+  t.pass();
+});
+
+test('Test with zero decimal currency and  rounding up', t => {
+  var zeroDecimal = zeroDecimalCurrencies(100.5100000052, 'JPY', false);
+
+  t.is(zeroDecimal, '101');
+  t.pass();
+});
+
+test('Test with zero decimal currency and display option rounding up', t => {
+  var zeroDecimal = zeroDecimalCurrencies(100.5100000052, 'JPY', true);
+
+  t.is(zeroDecimal, '101');
+  t.pass();
+});
+
 test('Test with no zero decimal currency', t => {
   var zeroDecimal = zeroDecimalCurrencies(1003.01, 'EUR');
 
