@@ -25,10 +25,10 @@ function toFixedNoRound(num, fixed) {
 }
 
 function toFixedRound(num, fixed, precision) {
-  var big = num * (10 ** precision);
+  var big = num * (Math.pow(10, precision));
   var bigNoRound = Number(toFixedNoRound(big, fixed).toString());
   var noRound = Number(toFixedNoRound(num, fixed).toString());
-  return noRound + (bigNoRound % noRound >= (10 ** (Math.log(bigNoRound % noRound) * Math.LOG10E + 1 | 0))/2);
+  return (noRound + (bigNoRound % noRound >= Math.pow(10, (Math.log(bigNoRound % noRound) * Math.LOG10E + 1 | 0))/2)).toString();
 }
 
 export default function(amount, currency, display, noRound) {
@@ -53,12 +53,12 @@ export default function(amount, currency, display, noRound) {
 
     if (ZERO_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
       //exclude all decimals
-      return toFixedRound(amount, 0, 2);
+      return noRound ? toFixedNoRound(amount, 0) : toFixedRound(amount, 0, 2);
     } else {
       if (noRound) {
         return display
-          ? toFixedRound(amount, 2, 2).toString()
-          : toFixedRound(amount, 2, 2)
+          ? toFixedNoRound(amount, 2).toString()
+          : toFixedNoRound(amount, 2)
               .toString()
               .replace('.', '');
       } else {
