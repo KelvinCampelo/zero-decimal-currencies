@@ -50,25 +50,25 @@ const smallestUnit = require('zero-decimal-currencies');
 //or import smallUnit from 'zero-decimal-currencies';
 
 let amount = smallestUnit(100.01, 'JPY'); //you dont want to display ¥100.01 to your customer, nether charge 100 times the correct amount
-console.log(amount); //100
+console.log(amount); //'100'
 
 let amount2 = smallestUnit(100.01, 'JPY', true); //even display set to true, will be nice to zero-decimal currencies
-console.log(amount2); //100
+console.log(amount2); //'100'
 
 let amount3 = smallestUnit(100.51, 'JPY'); //by default will round up with zero-decimal currencies
-console.log(amount3); //101
+console.log(amount3); //'101'
 
 let amount4 = smallestUnit(100.01, 'EUR'); //non zero-decimal currency, not useful to display, but useful to charge in Stripe
-console.log(amount4); //10001
+console.log(amount4); //'10001'
 
 let amount5 = smallestUnit(100.01, 'EUR', true); //non zero-decimal currency, useful to display, but not useful to charge in Stripe
-console.log(amount5); //100.01
+console.log(amount5); //'100.01'
 
 let amount6 = smallestUnit(15.7784514, 'EUR'); //round is default, using toFixed rules
-console.log(amount6); //1578
+console.log(amount6); //'1578'
 
 let amount7 = smallestUnit(15.7784514, 'EUR', false, true); //the last parameter is a noRound option, that always get the 2 first decimals even a big decimal (that js put in cientific notation)
-console.log(amount7); //1577
+console.log(amount7); //'1577'
 ```
 
 ## Author
