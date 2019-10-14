@@ -49,6 +49,8 @@ npm install zero-decimal-currencies
 const smallestUnit = require('zero-decimal-currencies');
 //or import smallUnit from 'zero-decimal-currencies';
 
+//smallestUnit(amount, currency, display, noRound);
+
 let amount = smallestUnit(100.01, 'JPY'); //you dont want to display ¥100.01 to your customer, nether charge 100 times the correct amount
 console.log(amount); //'100'
 
