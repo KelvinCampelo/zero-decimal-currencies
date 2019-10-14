@@ -1,6 +1,6 @@
 {
   "name": "zero-decimal-currencies",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Get the smallest currency unit event to a Zero Decimal Currency",
   "main": "lib/index.js",
   "files": [
