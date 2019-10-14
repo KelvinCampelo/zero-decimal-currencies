@@ -21,7 +21,14 @@ const ZERO_DECIMAL_CURRENCIES = [
 
 function toFixedNoRound(num, fixed) {
   var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
-  return num.toFixed(fixed + 1).match(re)[0];
+  return num.toString().match(re)[0];
+}
+
+function toFixedRound(num, fixed, precision) {
+  var big = num * (10 ** precision);
+  var bigNoRound = Number(toFixedNoRound(big, fixed).toString());
+  var noRound = Number(toFixedNoRound(num, fixed).toString());
+  return noRound + (bigNoRound % noRound >= (10 ** (Math.log(bigNoRound % noRound) * Math.LOG10E + 1 | 0))/2);
 }
 
 export default function(amount, currency, display, noRound) {
@@ -46,12 +53,12 @@ export default function(amount, currency, display, noRound) {
 
     if (ZERO_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
       //exclude all decimals
-      return toFixedNoRound(amount, 0);
+      return toFixedRound(amount, 0, 2);
     } else {
       if (noRound) {
         return display
-          ? toFixedNoRound(amount, 2).toString()
-          : toFixedNoRound(amount, 2)
+          ? toFixedRound(amount, 2, 2).toString()
+          : toFixedRound(amount, 2, 2)
               .toString()
               .replace('.', '');
       } else {
