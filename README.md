@@ -73,9 +73,14 @@ let amount7 = smallestUnit(15.7784514, 'EUR', false, true); //the last parameter
 console.log(amount7); //'1577'
 ```
 
-## Author
+## Contributors ✨
 
-Kelvin Campelo kelvsousa@gmail.com https://github.com/KelvinCampelo
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/KelvinCampelo"><img src="https://avatars2.githubusercontent.com/u/7349839?s=460&v=4" width="100px;" alt="Kelvin Campelo"/><br /><sub><b>Kelvin Campelo</b></sub></a><br /><a href="https://t.me/kelvincampelo" title="Talk to me">💬</a> <a href="https://github.com/KelvinCampelo/zero-decimal-currencies/commits?author=KelvinCampelo" title="Commits">📖</a></td>
+    <td align="center"><a href="https://github.com/MagdielCAS"><img src="https://avatars0.githubusercontent.com/u/7864626?s=460&v=4" width="100px;" alt="Magdiel Campelo"/><br /><sub><b>Magdiel Campelo </b></sub></a><br /><a href="https://github.com/KelvinCampelo/zero-decimal-currencies/commits?author=MagdielCAS" title="Commits">📖</a> </td>
+    </tr>
+</table>
 
 ## License
 
