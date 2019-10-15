@@ -3,6 +3,13 @@ import 'babel-core/register';
 
 import zeroDecimalCurrencies from '../src/lib/';
 
+test('Real case', t => {
+  var zeroDecimal = zeroDecimalCurrencies(175459.09, 'JPY');
+
+  t.is(zeroDecimal, '175459');
+  t.pass();
+});
+
 test('Test with zero decimal currency', t => {
   var zeroDecimal = zeroDecimalCurrencies(1003.01, 'JPY');
 

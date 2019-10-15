@@ -28,12 +28,12 @@
 </p>
 
 <p align="center"><big>
-Get the smallest currency unit event to a Zero Decimal Currency
+Get the smallest currency unit even to a Zero Decimal Currency
 </big></p>
 
 ## Features
 
-Get the smallest currency unit event to a Zero Decimal Currency
+Get the smallest currency unit even to a Zero Decimal Currency
 
 This lib with convert the amount in the smallest currency unit (e.g., 100 cents to charge €1.00 or 100 to charge ¥100, a zero-decimal currency).
 
