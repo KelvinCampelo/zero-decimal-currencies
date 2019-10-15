@@ -1,7 +1,7 @@
 {
   "name": "zero-decimal-currencies",
-  "version": "1.1.1",
-  "description": "Get the smallest currency unit event to a Zero Decimal Currency",
+  "version": "1.1.2",
+  "description": "Get the smallest currency unit even it is a Zero Decimal Currency",
   "main": "lib/index.js",
   "files": [
     "lib/"
