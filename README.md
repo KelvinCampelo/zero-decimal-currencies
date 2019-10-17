@@ -35,7 +35,7 @@ Get the smallest currency unit even it is a Zero Decimal Currency
 
 Get the smallest currency unit even it is a Zero Decimal Currency
 
-This lib with convert the amount in the smallest currency unit (e.g., 100 cents to charge €1.00 or 100 to charge ¥100, a zero-decimal currency).
+This lib will convert the amount to the smallest currency unit (e.g., 100 cents to charge €1.00 or 100 to charge ¥100, a zero-decimal currency).
 
 ## Install
 
@@ -51,10 +51,10 @@ const smallestUnit = require('zero-decimal-currencies');
 
 //smallestUnit(amount, currency, display, noRound);
 
-let amount = smallestUnit(100.01, 'JPY'); //you dont want to display ¥100.01 to your customer, nether charge 100 times the correct amount
+let amount = smallestUnit(100.01, 'JPY'); //you don't want to display ¥100.01 to your customer, neither charge 100 times the correct amount
 console.log(amount); //'100'
 
-let amount2 = smallestUnit(100.01, 'JPY', true); //even display set to true, will be nice to zero-decimal currencies
+let amount2 = smallestUnit(100.01, 'JPY', true); //even display mode set to true, will be nice to zero-decimal currencies
 console.log(amount2); //'100'
 
 let amount3 = smallestUnit(100.51, 'JPY'); //by default will round up with zero-decimal currencies
@@ -70,8 +70,15 @@ let amount6 = smallestUnit(15.7784514, 'EUR'); //round is default, using toFixed
 console.log(amount6); //'1578'
 
 let amount7 = smallestUnit(15.7784514, 'EUR', false, true); //the last parameter is a noRound option, that always get the 2 first decimals even a big decimal (that js put in cientific notation)
-console.log(amount7); //'1577'
+console.log(amount7); //'1578'
 ```
+
+| Params  	| Description  	|
+|---	|---	|
+|  amount (required)	|  Value that will be converted into the smallest currency unit 	|
+|  currency (required)	| Reference currency to calculate the units 	|
+|  display (optional)	|  Whether it should be returned in display format or not. Default: false	|
+|  noRound (optional)	|  Determines if the last digit should be rounded based on the decimals values, even if it is a zero decimal currency. Default: true 	|
 
 ## Contributors ✨
 
