@@ -78,7 +78,7 @@ console.log(amount7); //'1578'
 |  amount (required)	|  Value that will be converted into the smallest currency unit 	|
 |  currency (required)	| Reference currency to calculate the units 	|
 |  display (optional)	|  Whether it should be returned in display format or not. Default: false	|
-|  noRound (optional)	|  Determines if the last digit should be rounded based on the decimals values, even if it is a zero decimal currency. Default: true 	|
+|  noRound (optional)	|  Determines if the last digit should be rounded based on the decimals values, even if it is a zero decimal currency. Default: false 	|
 
 ## Contributors ✨
 
