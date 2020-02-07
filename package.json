@@ -26,7 +26,7 @@
     "coverage": "nyc --reporter=lcov --reporter=text --reporter=html npm test",
     "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "lint": "eslint src test",
-    "test": "ava --require babel-core/register",
+    "test": "ava --require @babel/register",
     "validate": "npm run lint && npm test",
     "prepare": "npm run build && npm run validate",
     "pp": "npm run prepare",
@@ -43,17 +43,19 @@
     "validate"
   ],
   "devDependencies": {
-    "ava": "^2.4.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.5.2",
+    "@ava/babel": "^1.0.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-syntax-function-bind": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/register": "^7.8.3",
+    "ava": "^3.2.0",
     "babel-eslint": "^10.0.3",
-    "babel-plugin-transform-function-bind": "^6.5.2",
-    "babel-preset-env": "^1.7.0",
-    "coveralls": "^3.0.7",
-    "cz-conventional-changelog": "^3.0.2",
+    "coveralls": "^3.0.9",
+    "cz-conventional-changelog": "^3.1.0",
     "escope": "^3.6.0",
-    "eslint": "^6.5.1",
-    "nyc": "^14.1.1",
+    "eslint": "^6.8.0",
+    "nyc": "^15.0.0",
     "pmm": "^2.0.0",
     "pre-commit": "^1.1.2"
   },
@@ -61,5 +63,8 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "ava": {
+    "babel": true
   }
 }
