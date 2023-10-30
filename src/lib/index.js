@@ -18,7 +18,15 @@ const ZERO_DECIMAL_CURRENCIES = [
   "XOF",
   "XPF"
 ];
-
+const THREE_DECIMAL_CURRENCIES = [
+  "BHD", 
+  "IQD", 
+  "JOD", 
+  "KWD", 
+  "LYD", 
+  "OMR", 
+  "TND"
+];
 function toFixedNoRound(num, fixed) {
   var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
   return num.toString().match(re)[0];
@@ -52,6 +60,8 @@ export const display = (amount, currency) => {
     if (ZERO_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
       //exclude all decimals
       return amount.toFixed(0);
+    } else if (THREE_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
+      return (amount / 1000).toFixed(3);
     } else {
       return (amount / 100).toFixed(2);
     }
@@ -85,10 +95,14 @@ export default function(amount, currency, display, noRound) {
       //exclude all decimals
       return noRound ? toFixedNoRound(amount, 0) : toFixedRound(amount, 0, 2);
     } else {
+      let noOfDecimals = 2;
+      if (THREE_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
+        noOfDecimals = 3;
+      }
       if (noRound) {
         return display
-          ? toFixedNoRound(amount, 2).toString()
-          : toFixedNoRound(amount, 2)
+          ? toFixedNoRound(amount, noOfDecimals).toString()
+          : toFixedNoRound(amount, noOfDecimals)
               .toString()
               .replace(".", "");
       } else {
@@ -97,7 +111,7 @@ export default function(amount, currency, display, noRound) {
           return display ? "0.00" : "0";
         }
 
-        amountFixed = amount.toFixed(2);
+        amountFixed = amount.toFixed(noOfDecimals);
 
         return display ? amountFixed : amountFixed.toString().replace(".", "");
       }
