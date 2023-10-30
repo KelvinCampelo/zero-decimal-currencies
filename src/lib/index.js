@@ -1,24 +1,7 @@
 import ZeroDecimalError from "./error-factory";
 
-const ZERO_DECIMAL_CURRENCIES = [
-  "BIF",
-  "CLP",
-  "DJF",
-  "GNF",
-  "JPY",
-  "KMF",
-  "KRW",
-  "MGA",
-  "PYG",
-  "RWF",
-  "UGX",
-  "VND",
-  "VUV",
-  "XAF",
-  "XOF",
-  "XPF"
-];
-
+const ZERO_DECIMAL_CURRENCIES = [ "BIF", "CLP", "DJF", "GNF", "JPY", "KMF", "KRW", "MGA", "PYG", "RWF", "UGX", "VND", "VUV", "XAF", "XOF", "XPF" ];
+const THREE_DECIMAL_CURRENCIES = [ "BHD", "IQD", "JOD", "KWD", "LYD", "OMR", "TND" ];
 function toFixedNoRound(num, fixed) {
   var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
   return num.toString().match(re)[0];
@@ -52,6 +35,8 @@ export const display = (amount, currency) => {
     if (ZERO_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
       //exclude all decimals
       return amount.toFixed(0);
+    } else if (THREE_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
+      return (amount / 1000).toFixed(3);
     } else {
       return (amount / 100).toFixed(2);
     }
@@ -84,22 +69,44 @@ export default function(amount, currency, display, noRound) {
     if (ZERO_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
       //exclude all decimals
       return noRound ? toFixedNoRound(amount, 0) : toFixedRound(amount, 0, 2);
-    } else {
+    } else if (THREE_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
+      if (noRound) {
+        return display
+          ? toFixedNoRound(amount, 3).toString()
+          : toFixedNoRound(amount, 3)
+              .toString()
+              .replace(".", "").replace(/.$/,"0") 
+
+      } else {
+        let amountFixed = amount;
+				if (amount < 0.001) {
+          return display ? "0.000" : "0";
+				}
+        
+        amountFixed = display? amount.toFixed(3): amount.toFixed(2);
+
+        return display ? amountFixed : 
+					amountFixed.toString()
+					  .replace(".", "")+"0";
+      }
+		} else {
       if (noRound) {
         return display
           ? toFixedNoRound(amount, 2).toString()
-          : toFixedNoRound(amount, 2)
-              .toString()
-              .replace(".", "");
+						:toFixedNoRound(amount, 2)
+							.toString()
+							.replace(".","");
+
       } else {
         let amountFixed = amount;
-        if (amount < 0.01) {
+				if (amount < 0.01) {
           return display ? "0.00" : "0";
         }
-
+        
         amountFixed = amount.toFixed(2);
 
-        return display ? amountFixed : amountFixed.toString().replace(".", "");
+        return display ? amountFixed : 
+					amountFixed.toString().replace(".","");
       }
     }
   } catch (error) {
@@ -107,3 +114,4 @@ export default function(amount, currency, display, noRound) {
     throw new ZeroDecimalError();
   }
 }
+
