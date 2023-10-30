@@ -135,3 +135,76 @@ test("Test display with zero decimal currency", t => {
   t.is(disp, "101");
   t.pass();
 });
+
+
+//for stripe, the least significant number needs to be zero for
+//compatibilities
+test("Test with three decimal currency", t => {
+  var zeroDecimal = zeroDecimalCurrencies(1003.01, "IQD");
+
+  t.is(zeroDecimal, "1003010");
+  t.pass();
+});
+
+test("Test with three decimal currency no round", t => {
+  var zeroDecimal = zeroDecimalCurrencies(15.7784514, "IQD", false, true);
+
+  t.is(zeroDecimal, "15770");
+  t.pass();
+});
+
+test("Test with three decimal currency no round and display to customer", t => {
+  var zeroDecimal = zeroDecimalCurrencies(15.7784514, "IQD", true, true);
+
+  t.is(zeroDecimal, "15.778");
+  t.pass();
+});
+
+test("Test with three decimal currency with round", t => {
+  var zeroDecimal = zeroDecimalCurrencies(15.7784514, "IQD");
+
+  t.is(zeroDecimal, "15780");
+  t.pass();
+});
+
+test("Test with three decimal currency with roundand display to customer", t => {
+  var zeroDecimal = zeroDecimalCurrencies(15.7784514, "IQD", true);
+
+  t.is(zeroDecimal, "15.778");
+  t.pass();
+});
+
+test("Test with three decimal currency cientific notation long number no round", t => {
+  var zeroDecimal = zeroDecimalCurrencies(0.0000000052, "IQD");
+
+  t.is(zeroDecimal, "0");
+  t.pass();
+});
+
+test("Test with three decimal currency cientific notation long number no round and display to customer", t => {
+  var zeroDecimal = zeroDecimalCurrencies(0.0000000052, "IQD", true);
+
+  t.is(zeroDecimal, "0.000");
+  t.pass();
+});
+
+test("Test with three decimal currency cientific notation long number no round 2", t => {
+  var zeroDecimal = zeroDecimalCurrencies(1.0000000052, "IQD");
+
+  t.is(zeroDecimal, "1000");
+  t.pass();
+});
+
+test("Test with three decimal currency cientific notation long number no round 3", t => {
+  var zeroDecimal = zeroDecimalCurrencies(14.1000000052, "IQD");
+
+  t.is(zeroDecimal, "14100");
+  t.pass();
+});
+
+test("Test display with three decimal currency", t => {
+  var zeroDecimal = zeroDecimalCurrencies(14.1000000052, "IQD");
+  var disp = display(zeroDecimal, "IQD");
+  t.is(disp, "14.100");
+  t.pass();
+});
