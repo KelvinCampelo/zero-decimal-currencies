@@ -21,12 +21,12 @@
     "url": "https://github.com/KelvinCampelo/zero-decimal-currencies"
   },
   "scripts": {
-    "build": "babel -d ./ ./src",
+    "build": "tsc && babel -d ./lib ./src --extensions \".ts,.tsx\"",
     "check": "npm outdated --depth 0",
     "coverage": "nyc --reporter=lcov --reporter=text --reporter=html npm test",
     "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "lint": "eslint src test",
-    "test": "ava --require @babel/register",
+    "lint": "eslint src test.ts --ext .ts,.tsx",
+    "test": "ava",
     "validate": "npm run lint && npm test",
     "prepare": "npm run build && npm run validate",
     "pp": "npm run prepare",
@@ -48,23 +48,35 @@
     "@babel/core": "^7.8.4",
     "@babel/plugin-syntax-function-bind": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.24.1",
     "@babel/register": "^7.8.3",
+    "@types/node": "^20.12.12",
+    "@typescript-eslint/eslint-plugin": "^7.10.0",
+    "@typescript-eslint/parser": "^7.10.0",
     "ava": "^5.2.0",
     "babel-eslint": "^10.0.3",
     "coveralls": "^3.0.9",
     "cz-conventional-changelog": "^3.1.0",
     "escope": "^3.6.0",
-    "eslint": "^6.8.0",
+    "eslint": "^8.57.0",
     "nyc": "^15.0.0",
     "pmm": "^2.0.0",
-    "pre-commit": "^1.1.2"
+    "pre-commit": "^1.1.2",
+    "tsimp": "^2.0.11",
+    "typescript": "^5.4.5"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
+  "type": "module",
   "ava": {
-    "babel": true
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--import=tsimp"
+    ]
   }
 }
