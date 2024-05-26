@@ -2,9 +2,9 @@
   "name": "zero-decimal-currencies",
   "version": "1.2.0",
   "description": "Get the smallest currency unit even it is a Zero Decimal Currency",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "keywords": [
     "zero-decimal",
@@ -21,15 +21,16 @@
     "url": "https://github.com/KelvinCampelo/zero-decimal-currencies"
   },
   "scripts": {
-    "build": "tsc && babel -d ./lib ./src --extensions \".ts,.tsx\"",
-    "check": "npm outdated --depth 0",
-    "coverage": "nyc --reporter=lcov --reporter=text --reporter=html npm test",
-    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "lint": "eslint src test.ts --ext .ts,.tsx",
+    "clean": "rm -rf ./dist ./coverage ./.tsimp ./node_modules",
+    "build": "tsc && tsup ./src --format esm,cjs,iife",
+    "check": "pnpm outdated --depth 0",
+    "coveralls": "pnpm run test:coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "lint": "eslint src test.ts",
     "test": "ava",
-    "validate": "npm run lint && npm test",
-    "prepare": "npm run build && npm run validate",
-    "pp": "npm run prepare",
+    "test:coverage": "c8 --reporter=lcov ava",
+    "validate": "pnpm run lint && pnpm test",
+    "prepare": "pnpm run build && pnpm run validate",
+    "pp": "pnpm run prepare",
     "major": "pmm major",
     "minor": "pmm minor",
     "patch": "pmm patch"
@@ -43,27 +44,19 @@
     "validate"
   ],
   "devDependencies": {
-    "@ava/babel": "^1.0.1",
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/plugin-syntax-function-bind": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-typescript": "^7.24.1",
-    "@babel/register": "^7.8.3",
+    "@swc/core": "^1.5.7",
     "@types/node": "^20.12.12",
-    "@typescript-eslint/eslint-plugin": "^7.10.0",
-    "@typescript-eslint/parser": "^7.10.0",
-    "ava": "^5.2.0",
-    "babel-eslint": "^10.0.3",
-    "coveralls": "^3.0.9",
-    "cz-conventional-changelog": "^3.1.0",
-    "escope": "^3.6.0",
-    "eslint": "^8.57.0",
-    "nyc": "^15.0.0",
+    "ava": "^6.1.3",
+    "c8": "^9.1.0",
+    "coveralls-next": "^4.2.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "nyc": "^15.1.0",
     "pmm": "^2.0.0",
-    "pre-commit": "^1.1.2",
+    "pre-commit": "^1.2.2",
     "tsimp": "^2.0.11",
-    "typescript": "^5.4.5"
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.10.0"
   },
   "config": {
     "commitizen": {
@@ -78,5 +71,19 @@
     "nodeArguments": [
       "--import=tsimp"
     ]
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "target": "es5",
+    "platform": "neutral",
+    "format": [
+      "cjs",
+      "esm",
+      "iife"
+    ],
+    "clean": true,
+    "tsconfig": "tsconfig.json"
   }
 }
