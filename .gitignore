@@ -44,3 +44,7 @@ ehthumbs.db
 Thumbs.db
 .tsimp
 .vscode
+tsconfig.tsbuildinfo
+
+lib/*
+dist/*
