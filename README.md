@@ -13,8 +13,8 @@
     <img src="https://img.shields.io/github/issues/KelvinCampelo/zero-decimal-currencies.svg" alt="Github Issues">
   </a>
 
-  <a href="https://travis-ci.org/KelvinCampelo/zero-decimal-currencies">
-    <img src="https://img.shields.io/travis/KelvinCampelo/zero-decimal-currencies.svg" alt="Travis Status">
+  <a href="https://github.com/KelvinCampelo/zero-decimal-currencies/actions/workflows/coveralls.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/KelvinCampelo/zero-decimal-currencies/coveralls.yml" alt="GitHub Actions Workflow Status">
   </a>
 
   <a href="https://coveralls.io/github/KelvinCampelo/zero-decimal-currencies">
