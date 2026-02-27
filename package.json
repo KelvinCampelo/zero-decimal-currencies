@@ -2,7 +2,17 @@
   "name": "zero-decimal-currencies",
   "version": "1.2.0",
   "description": "Get the smallest currency unit even it is a Zero Decimal Currency",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "dist/"
   ],
@@ -22,7 +32,7 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist ./coverage ./.tsimp ./node_modules",
-    "build": "tsc && tsup ./src --format esm,cjs,iife",
+    "build": "tsup ./src --format esm,cjs,iife",
     "check": "pnpm outdated --depth 0",
     "coveralls": "pnpm run test:coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "lint": "eslint src test.ts",
@@ -44,19 +54,21 @@
     "validate"
   ],
   "devDependencies": {
-    "@swc/core": "^1.5.7",
-    "@types/node": "^20.12.12",
-    "ava": "^6.1.3",
-    "c8": "^9.1.0",
-    "coveralls-next": "^4.2.1",
+    "@eslint/js": "^10.0.1",
+    "@swc/core": "^1.15.17",
+    "@types/node": "^25.3.2",
+    "ava": "^6.4.1",
+    "c8": "^11.0.0",
+    "coveralls-next": "^6.0.1",
     "cz-conventional-changelog": "^3.3.0",
-    "nyc": "^15.1.0",
+    "eslint": "^10.0.2",
+    "nyc": "^18.0.0",
     "pmm": "^2.0.0",
     "pre-commit": "^1.2.2",
-    "tsimp": "^2.0.11",
-    "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.10.0"
+    "tsimp": "^2.0.12",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
   },
   "config": {
     "commitizen": {
@@ -76,8 +88,9 @@
     "entry": [
       "src/index.ts"
     ],
-    "target": "es5",
+    "target": "es2022",
     "platform": "neutral",
+    "dts": true,
     "format": [
       "cjs",
       "esm",
@@ -85,5 +98,8 @@
     ],
     "clean": true,
     "tsconfig": "tsconfig.json"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
