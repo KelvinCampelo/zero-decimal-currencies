@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import test from "ava";
-import zeroDecimalCurrencies, { display } from "./src/index";
+import zeroDecimalCurrencies, { display } from "./src/index.js";
 
 test("Real case", (t) => {
   const zeroDecimal = zeroDecimalCurrencies(175459.09, "JPY");
