@@ -1,7 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import test from "ava";
-import zeroDecimalCurrencies, { display } from "./src/index.js";
+import zeroDecimalCurrencies, {
+  display,
+  getCurrencyInfo,
+  isValidCurrency,
+  fromSmallestUnit,
+  toStripeUnit,
+  ZERO_DECIMAL_CURRENCIES,
+  THREE_DECIMAL_CURRENCIES
+} from "./src/index.js";
 
 test("Real case", (t) => {
   const zeroDecimal = zeroDecimalCurrencies(175459.09, "JPY");
@@ -207,3 +215,59 @@ test("Test display with three decimal currency", (t) => {
   t.is(disp, "14.100");
   t.pass();
 });
+
+test("Test float issues with 19.99 * 100", (t) => {
+  // 19.99 * 100 = 1998.9999999999998 in float math.
+  // It should correctly parse as 1999 without rounding down to 1998.
+  const zeroDecimal = zeroDecimalCurrencies(19.99, "USD");
+  t.is(zeroDecimal, "1999");
+  t.pass();
+});
+
+test("getCurrencyInfo returns correct decimals", (t) => {
+  t.is(getCurrencyInfo("JPY").decimals, 0);
+  t.is(getCurrencyInfo("KWD").decimals, 3);
+  t.is(getCurrencyInfo("USD").decimals, 2);
+  t.pass();
+});
+
+test("isValidCurrency checks correctly", (t) => {
+  t.true(isValidCurrency("JPY"));
+  t.true(isValidCurrency("USD"));
+  t.false(isValidCurrency("ABC"));
+  t.pass();
+});
+
+test("fromSmallestUnit converts back correctly", (t) => {
+  t.is(fromSmallestUnit(100, "JPY"), 100);
+  t.is(fromSmallestUnit(1050, "USD"), 10.50);
+  t.is(fromSmallestUnit(15780, "KWD"), 15.780);
+  t.pass();
+});
+
+test("toStripeUnit correctly converts standard formats", (t) => {
+  t.is(toStripeUnit(10.50, "USD"), "1050");
+  t.is(toStripeUnit(100.51, "JPY"), "101");
+  t.is(toStripeUnit(15.778, "KWD"), "15780");
+  t.pass();
+});
+
+test("display with locale options", (t) => {
+  const disp1 = display(1050, "USD", { locale: "en-US" });
+  t.is(disp1, "$10.50");
+
+  const disp2 = display(1050, "EUR", { locale: "de-DE" });
+  // Allow normal non-breaking space depending on Node version, just check it has 10,50
+  t.true(disp2.includes("10,50"));
+  
+  t.pass();
+});
+
+test("Exported constants are accessible", (t) => {
+  t.true(Array.isArray(ZERO_DECIMAL_CURRENCIES));
+  t.true(Array.isArray(THREE_DECIMAL_CURRENCIES));
+  t.true(ZERO_DECIMAL_CURRENCIES.includes("JPY"));
+  t.true(THREE_DECIMAL_CURRENCIES.includes("KWD"));
+  t.pass();
+});
+

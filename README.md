@@ -39,10 +39,12 @@ Whether you are charging **$10.00 (1000 cents)** or **¥1000 (1000 JPY)**, this 
 
 - ✅ **Full Support for Zero-Decimal Currencies**: Automatically handles JPY, KRW, CLP, and more.
 - ✅ **Three-Decimal Currency Logic**: Specialized handling for BHD, KWD, OMR, etc.
-- ✅ **Stripe Ready**: Perfect for generating `amount` fields for Stripe PaymentIntents.
+- ✅ **Stripe Ready**: Built-in support to handle Stripe's trailing zero requirements.
+- ✅ **Robust Precision**: Avoids JavaScript `0.1 + 0.2` float math bugs internally without bulky dependencies like `decimal.js`.
 - ✅ **Precision Controls**: Built-in support for rounding vs. truncation (`noRound`).
-- ✅ **Dual-Purpose**: Switch between **charge format** (smallest units) and **display format** (human-readable).
-- ✅ **Modern & Type-Safe**: Written in TypeScript with ESM and CommonJS support.
+- ✅ **Rich Helpers**: Convert back `fromSmallestUnit`, check `isValidCurrency`, or fetch `getCurrencyInfo`.
+- ✅ **Native Localized Display**: Use standard `Intl.NumberFormat` output automatically configured per currency.
+- ✅ **Modern & Type-Safe**: Includes strict `CurrencyCode` union types for all ISO 4217 currencies, written in ESM & CommonJS.
 
 ---
 
@@ -62,29 +64,64 @@ yarn add zero-decimal-currencies
 
 ### Basic Conversion (Default behavior)
 
-By default, the library converts a human-readable amount into the **smallest unit** (integer string) expected by payment gateways.
+By default, the default export converts a human-readable amount into the **smallest unit** (integer string) expected by payment gateways.
 
 ```typescript
-import smallestUnit from 'zero-decimal-currencies';
+import toSmallestUnit from 'zero-decimal-currencies';
 
 // 💵 Standard Currencies (2 decimals)
-smallestUnit(10.50, 'USD'); // "1050"
+toSmallestUnit(10.50, 'USD'); // "1050"
 
 // 💴 Zero-Decimal Currencies (0 decimals)
-smallestUnit(100.51, 'JPY'); // "101" (rounded)
+toSmallestUnit(100.51, 'JPY'); // "101" (rounded up)
 
 // 🇰🇼 Three-Decimal Currencies (3 decimals)
-smallestUnit(15.778, 'KWD'); // "15780" (Stripe format)
+toSmallestUnit(15.778, 'KWD'); // "15780" (Stripe format, appends a zero)
 ```
 
-### Advanced Options
+### Advanced Helpers & Features
+
+We provide several named exports to handle the complete payment lifecycle:
 
 ```typescript
-// display: true -> returns formatted string for UI
-smallestUnit(100.01, 'EUR', true); // "100.01"
+import { 
+  display, 
+  toStripeUnit, 
+  fromSmallestUnit, 
+  getCurrencyInfo, 
+  isValidCurrency 
+} from 'zero-decimal-currencies';
+
+// 1️⃣ Format for the User Interface with Intl Locales
+display(1050, 'USD', { locale: 'en-US' }); // "$10.50"
+display(1050, 'EUR', { locale: 'de-DE' }); // "10,50 €"
+
+// 2️⃣ Explicitly cast to Stripe Units (Semantic alias for the default export)
+toStripeUnit(10.50, 'USD'); // "1050"
+
+// 3️⃣ Convert from Smallest Unit back to Major Unit (e.g. reading from a DB)
+fromSmallestUnit(1050, 'USD'); // 10.5
+fromSmallestUnit(100, 'JPY');  // 100
+fromSmallestUnit(15780, 'KWD'); // 15.78
+
+// 4️⃣ Validation & Metadata
+isValidCurrency('USD'); // true
+isValidCurrency('ABC'); // false
+
+getCurrencyInfo('JPY'); // { decimals: 0 }
+getCurrencyInfo('KWD'); // { decimals: 3 }
+getCurrencyInfo('EUR'); // { decimals: 2 }
+```
+
+### Advanced Precision Options
+
+If you need to bypass standard rounding behavior when converting down to smallest units:
+
+```typescript
+import toSmallestUnit from 'zero-decimal-currencies';
 
 // noRound: true -> truncates instead of rounding
-smallestUnit(15.7784, 'EUR', false, true); // "1577"
+toSmallestUnit(15.7784, 'EUR', false, true); // "1577"
 ```
 
 ### API Reference
@@ -92,17 +129,19 @@ smallestUnit(15.7784, 'EUR', false, true); // "1577"
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `amount` | `number \| string` | Yes | The amount to convert. |
-| `currency` | `string` | Yes | ISO 4217 currency code (e.g., `USD`, `JPY`). |
-| `display` | `boolean` | No | If `true`, returns a formatted string for UI (e.g., `10.00`). Default: `false`. |
+| `currency` | `CurrencyCode \| string` | Yes | ISO 4217 currency code (e.g., `USD`, `JPY`). |
+| `displayMode` | `boolean` | No | Legacy display mode. Recommended to use the `display()` named export instead. Default: `false`. |
 | `noRound` | `boolean` | No | If `true`, truncates decimals instead of rounding. Default: `false`. |
 
 ---
 
 ## 🌍 Supported Currencies
 
-The library maintains internal lists for:
+The library exports `type CurrencyCode` with all ISO 4217 standard codes for strict TypeScript autocomplete, and categorizes specific decimals internally for:
 - **Zero-Decimal**: BIF, CLP, DJF, GNF, JPY, KMF, KRW, MGA, PYG, RWF, UGX, VND, VUV, XAF, XOF, XPF.
 - **Three-Decimal**: BHD, IQD, JOD, KWD, LYD, OMR, TND.
+
+*(You can also access these lists natively via `ZERO_DECIMAL_CURRENCIES` and `THREE_DECIMAL_CURRENCIES` exports).*
 
 ---
 

@@ -1,6 +1,9 @@
 import ZeroDecimalError from "./error-factory.js";
+import { VALID_CURRENCIES, type CurrencyCode } from "./currencies.js";
 
-const ZERO_DECIMAL_CURRENCIES: string[] = [
+export type { CurrencyCode };
+
+export const ZERO_DECIMAL_CURRENCIES: string[] = [
   "BIF",
   "CLP",
   "DJF",
@@ -18,7 +21,7 @@ const ZERO_DECIMAL_CURRENCIES: string[] = [
   "XOF",
   "XPF",
 ];
-const THREE_DECIMAL_CURRENCIES: string[] = [
+export const THREE_DECIMAL_CURRENCIES: string[] = [
   "BHD",
   "IQD",
   "JOD",
@@ -29,9 +32,11 @@ const THREE_DECIMAL_CURRENCIES: string[] = [
 ];
 
 function toFixedNoRound(num: number, fixed: number): number {
-  const factor: number = Math.pow(10, fixed);
-  const result = Math.trunc(num * factor) / factor; // Truncate to desired decimal places
-  return isNaN(result) ? 0 : result; // Handle cases where num is NaN or Infinity
+  const factor = Math.pow(10, fixed);
+  // eliminate binary float truncation errors by rounding to a high precision first
+  const cleanVal = Math.round(num * factor * 10000) / 10000;
+  const result = Math.trunc(cleanVal) / factor;
+  return isNaN(result) ? 0 : result;
 }
 
 function toFixedRound(num: number, fixed: number, precision: number): string {
@@ -46,7 +51,44 @@ function toFixedRound(num: number, fixed: number, precision: number): string {
   return result.toString();
 }
 
-function display(amount: number | string, currency: string): string {
+export function getCurrencyInfo(currencyCode: string): { decimals: number } {
+  const code = currencyCode.toUpperCase();
+  if (ZERO_DECIMAL_CURRENCIES.includes(code)) return { decimals: 0 };
+  if (THREE_DECIMAL_CURRENCIES.includes(code)) return { decimals: 3 };
+  return { decimals: 2 };
+}
+
+export function isValidCurrency(currencyCode: string): boolean {
+  return VALID_CURRENCIES.includes(currencyCode.toUpperCase() as CurrencyCode);
+}
+
+export function toStripeUnit(amount: number | string, currency: string): string {
+  return exec(amount, currency, false, false);
+}
+
+export function fromSmallestUnit(amount: number | string, currency: string): number {
+  const amountNum = parseFloat(amount.toString());
+  if (isNaN(amountNum)) {
+    throw new ZeroDecimalError("The amount cannot be parsed to Float");
+  }
+  
+  const { decimals } = getCurrencyInfo(currency);
+  
+  // For three-decimal currencies, Stripe's convention (and this lib's default) 
+  // appends a zero (effectively multiplying by 1000 vs 100 for some others, 
+  // but to reverse Stripe-compatible three-decimal amounts, we divide by 1000).
+  if (decimals === 3) {
+     return amountNum / 1000;
+  }
+  
+  return amountNum / Math.pow(10, decimals);
+}
+
+export function display(
+  amount: number | string,
+  currency: string,
+  options?: { locale?: string }
+): string {
   try {
     const amountNum = parseFloat(amount.toString());
 
@@ -54,25 +96,41 @@ function display(amount: number | string, currency: string): string {
       throw new ZeroDecimalError("The amount cannot be parsed to Float");
     }
 
-    if (ZERO_DECIMAL_CURRENCIES.includes(currency.toUpperCase())) {
-      return amountNum.toFixed(0);
-    } else if (
-      THREE_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())
-    ) {
-      return (amountNum / 1000).toFixed(3);
+    let value: number;
+    let decimals: number;
+    const code = currency.toUpperCase();
+
+    if (ZERO_DECIMAL_CURRENCIES.includes(code)) {
+      value = amountNum;
+      decimals = 0;
+    } else if (THREE_DECIMAL_CURRENCIES.includes(code)) {
+      value = amountNum / 1000;
+      decimals = 3;
     } else {
-      return (amountNum / 100).toFixed(2);
+      value = amountNum / 100;
+      decimals = 2;
     }
+
+    if (options?.locale) {
+      return new Intl.NumberFormat(options.locale, {
+        style: 'currency',
+        currency: code,
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }).format(value);
+    }
+
+    return value.toFixed(decimals);
   } catch (error) {
     console.error(error);
     throw new ZeroDecimalError("Error displaying amount");
   }
 }
 
-function exec(
+export default function exec(
   amount: number | string,
   currency: string,
-  display: boolean = false,
+  displayMode: boolean = false,
   noRound: boolean = false
 ): string {
   try {
@@ -82,16 +140,16 @@ function exec(
       throw new ZeroDecimalError("The amount cannot be parsed to Float");
     }
 
-    if (ZERO_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())) {
+    const code = currency.toString().toUpperCase();
+
+    if (ZERO_DECIMAL_CURRENCIES.includes(code)) {
       // Exclude all decimals
       return noRound
         ? toFixedNoRound(amountNum, 0).toString()
         : toFixedRound(amountNum, 0, 2);
-    } else if (
-      THREE_DECIMAL_CURRENCIES.includes(currency.toString().toUpperCase())
-    ) {
+    } else if (THREE_DECIMAL_CURRENCIES.includes(code)) {
       if (noRound) {
-        return display
+        return displayMode
           ? toFixedNoRound(amountNum, 3).toString()
           : toFixedNoRound(amountNum, 3)
               .toString()
@@ -99,26 +157,26 @@ function exec(
               .replace(/.$/, "0");
       } else {
         if (amountNum < 0.001) {
-          return display ? "0.000" : "0";
+          return displayMode ? "0.000" : "0";
         }
 
-        const amountFixed = display ? amountNum.toFixed(3) : amountNum.toFixed(2);
+        const amountFixed = displayMode ? amountNum.toFixed(3) : amountNum.toFixed(2);
 
-        return display
+        return displayMode
           ? amountFixed
           : amountFixed.toString().replace(".", "") + "0";
       }
     } else {
       if (noRound) {
-        return display
+        return displayMode
           ? toFixedNoRound(amountNum, 2).toString()
           : toFixedNoRound(amountNum, 2).toString().replace(".", "");
       } else {
         return amountNum < 0.01
-          ? display
+          ? displayMode
             ? "0.00"
             : "0"
-          : display
+          : displayMode
           ? amountNum.toFixed(2)
           : amountNum.toFixed(2).toString().replace(".", "");
       }
@@ -128,6 +186,3 @@ function exec(
     throw new ZeroDecimalError("Error processing amount");
   }
 }
-
-export { display };
-export default exec;
