@@ -1,6 +1,6 @@
 {
   "name": "zero-decimal-currencies",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Get the smallest currency unit even it is a Zero Decimal Currency",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
